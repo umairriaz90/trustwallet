@@ -9,6 +9,7 @@ import Lottery from "./abis/Lottery.json"
 import ERC20 from "./abis/ERC20.json"
 import MRTToken from "./abis/MRTToken.json"
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Web3 from 'web3';
 
 import { UserProvider } from "./context/UserContext"
 import { ContractProvider } from "./context/ContractContext"
@@ -129,9 +130,9 @@ function App() {
      */
 
     const loadProvider = useCallback(async() => {
-        let prov = new ethers.providers.Web3Provider(window.ethereum)
-        setProvider(prov)
-        return prov
+        let web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+        setProvider(web3)
+        return web3
     }, [setProvider])
 
     const loadDaiContract = useCallback(async(_provider) => {
@@ -152,9 +153,9 @@ function App() {
         setPmknTokenContract(contract)
     }, [setPmknTokenContract])
 	const loadmrtToken = useCallback(async(_provider) => {
-        let mrtTokenAddress = "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3" 
-        let contract = new ethers.Contract(mrtTokenAddress, MRTToken.abi, _provider)
-		console.log(contract);
+        let web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+        let contract = new web3.eth.Contract(MRTToken.abi, "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3");
+        console.log(contract)
         setmrtContract(contract)
     }, [setmrtContract])
     const loadPmknFarmContract = useCallback(async(_provider) => {
@@ -260,34 +261,27 @@ providerOptions
     }, [pmknTokenContract, setPmknBalance])
 	
 	const loadmrtBalance = useCallback(async(user) => {
-		let prova = new ethers.providers.Web3Provider(window.ethereum)
-		console.log(prova);
-		let mrtTokanAddress = "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3" 
-        let contracta = new ethers.Contract(mrtTokanAddress, MRTToken.abi, prova)
-		console.log(contracta);
-        let balancea = await contracta.dividendTokenBalanceOf(user)
-		console.log(balancea)
-        setmrtBalance(balancea.toString())
+		let web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+                // Instantiate smart contract using ABI and address.
+                let getrewards = new web3.eth.Contract(MRTToken.abi, "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3");
+                let counter = await getrewards.methods.dividendTokenBalanceOf(user).call();
+                setmrtBalance(counter.toString());
     }, [mrtBalance, setmrtBalance])
 	
 	const loadmrtEarned = useCallback(async(user) => {
-		let prova = new ethers.providers.Web3Provider(window.ethereum)
-		let mrtTokanAddress = "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3" 
-        let contracta = new ethers.Contract(mrtTokanAddress, MRTToken.abi, prova)
-		console.log(contracta);
-        let balancea = await contracta.getAccountDividendsInfo(user)
-		console.log(balancea)
-        setmrtEarned(balancea[3].toString())
+		let web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+                // Instantiate smart contract using ABI and address.
+                let getrewards = new web3.eth.Contract(MRTToken.abi, "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3");
+                let counter = await getrewards.methods.getAccountDividendsInfo(user).call();
+                setmrtEarned(counter[3].toString());
     }, [mrtEarned, setmrtEarned])
 	
 	const loadmrtRewards = useCallback(async(user) => {
-		let prova = new ethers.providers.Web3Provider(window.ethereum)
-		let mrtTokanAddress = "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3" 
-        let contracta = new ethers.Contract(mrtTokanAddress, MRTToken.abi, prova)
-		console.log(contracta);
-        let balancea = await contracta.getAccountDividendsInfo(user)
-		console.log(balancea)
-        setmrtRewards(balancea[4].toString())
+		let web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+                // Instantiate smart contract using ABI and address.
+                let getrewards = new web3.eth.Contract(MRTToken.abi, "0xb15f39d979208f05474cf4b8f66fd46f6f4a77f3");
+                let counter = await getrewards.methods.getAccountDividendsInfo(user).call();
+                setmrtRewards(counter[4].toString());
     }, [mrtRewards, setmrtRewards])
 	
 	

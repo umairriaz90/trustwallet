@@ -96,7 +96,7 @@ export default function RewardClaim() {
     const withdrawYield = async() => {
 		try {
         let signer = provider.getSigner()
-        let tx = await mrtContract.connect(signer).claim()
+        let tx = await mrtContract.methods.claim().call()
         return tx
 		}
 		catch(err) {
